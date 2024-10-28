@@ -1,0 +1,16 @@
+{
+  "name": "pizza-management",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "deploy": "cd packages/client && vercel deploy"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16"
+  }
+}

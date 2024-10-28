@@ -1,0 +1,14 @@
+{
+  "name": "@pizza-management/shared",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "typescript": "^5.6.3"
+  }
+}
