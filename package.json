@@ -1,6 +1,7 @@
 {
   "name": "pizza-management",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],

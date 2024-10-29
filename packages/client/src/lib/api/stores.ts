@@ -7,8 +7,6 @@ export async function getStores() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
-  console.log('Fetching stores for user:', user.id)
-
   const { data: stores, error } = await supabase
     .from('stores')
     .select(`
