@@ -31,8 +31,8 @@ jobs:
 
       - name: Start Vite front-end and Supabase back-end
         run: |
-          npm run dev
-          sleep 10 # Give some time for services to be ready
+          npm run dev & # Start Vite and Supabase in the background
+          sleep 120 # Give some time for services to be ready
 
       - name: Run Tests
         run: npm run test:coverage

@@ -1,6 +1,11 @@
-# Pizza Management System
+# 🍕 Mozz™️ – Pizza Management System
+[![Tests](https://github.com/{username}/mozz/actions/workflows/test.yml/badge.svg)](https://github.com/claybailey2/mozz/actions/workflows/test.yml)
+[![Deploy](https://vercel.com/button)](https://mozz-client-claybailey2s-projects.vercel.app)
 
 A modern web application for managing pizza stores, toppings, and chef collaborations. Built with React, TypeScript, and Supabase.
+
+[Live Demo - www.mozz.online](https://www.mozz.online)
+
 
 ## Features
 
@@ -78,16 +83,31 @@ A modern web application for managing pizza stores, toppings, and chef collabora
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
+   You may update these values in the `.env` file with your Supabase project credentials.
+
 4. Start the development server:
    ```bash
    # Run both frontend and backend
    npm run dev
    ```
+   
+   Vite frontend typically runs at `http://localhost:5173`, while the Supabase backend will be available on `http://[docker-container]:54321` (e.g.`http://127.0.0.1:54321 `) by default.
 
-## Testing
+### Running Tests Locally
 
+1. Start the Supabase local instance:
+```bash
+npx supabase start
+```
+
+2. Run the test suite:
 ```bash
 npm run test
+```
+
+3. View coverage report:
+```bash
+npm run test:coverage
 ```
 
 ## Building for Production
