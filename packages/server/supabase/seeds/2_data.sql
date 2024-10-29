@@ -150,3 +150,13 @@ VALUES
     '34567890-3456-3456-3456-345678901234',
     'dddddddd-dddd-dddd-dddd-dddddddddddd'
   );
+
+INSERT INTO
+  public.registered_emails (email, created_at)
+VALUES
+  ('owner@downtown.com', NOW()),
+  ('owner@uptown.com', NOW()),
+  ('chef1@downtown.com', NOW()),
+  ('chef2@downtown.com', NOW()),
+  ('chef1@uptown.com', NOW()),
+  ('jack@alltrades.com', NOW());

@@ -39,8 +39,8 @@ export function SignupForm() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold">Get Started Free</h2>
-        <p className="text-cool-gray">No credit card required</p>
+        <h2 className="text-2xl font-bold">Get Started</h2>
+        <p className="text-cool-gray">Share your pizza creations today!</p>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,7 +73,7 @@ export function SignupForm() {
           className="w-full bg-gradient-to-r from-crimson to-burnt-sienna hover:from-crimson/90 hover:to-burnt-sienna/90" 
           disabled={loading}
         >
-          {loading ? 'Creating Account...' : 'Create Free Account'}
+          {loading ? 'Creating Account...' : 'Create Account'}
         </Button>
       </form>
       

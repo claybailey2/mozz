@@ -109,7 +109,6 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Check if user exists in auth.users
     const { data } = await supabase.auth.admin.listUsers();
-    console.log(data);
     const existingUser =
       data?.users.filter((user: User) => user.email === email.toLowerCase()) ||
       [];

@@ -52,12 +52,12 @@ export function RootLayout({ showAuthNav = false, children }: RootLayoutProps) {
             </Link>
 
             {/* Desktop Navigation Links */}
-            {!showAuthNav && user && (
+            {user && (
               <NavLink
                 to="/stores"
                 className={({ isActive }) =>
                   `hidden md:flex items-center gap-2 text-md font-medium transition-colors hover:text-crimson
-                  ${isActive ? 'text-crimson' : 'text-muted-foreground'}`
+                  ${isActive ? 'text-crimson' : 'text-burnt-sienna'}`
                 }
               >
                 <Store className="h-4 w-4" />
@@ -92,7 +92,7 @@ export function RootLayout({ showAuthNav = false, children }: RootLayoutProps) {
                 asChild
                 className="bg-gradient-to-r from-crimson to-burnt-sienna hover:from-crimson/90 hover:to-burnt-sienna/90"
               >
-                <Link to="/">Sign Up Free</Link>
+                <Link to="/">Sign Up Now</Link>
               </Button>
             </div>
           )}

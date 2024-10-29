@@ -1,5 +1,8 @@
+// lib/api/invitations.ts
 import { supabase } from "../supabase"
 
+
+// Serverless function - vercel
 const apiUrl = import.meta.env.DEV 
   ? 'http://localhost:3000/api/invitations'
   : '/api/invitations'

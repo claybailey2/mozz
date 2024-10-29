@@ -1,11 +1,12 @@
-# Pizza Management System
+# 🍕 Mozz™️ – Pizza Management System
+[![Tests](https://github.com/claybailey2/mozz/actions/workflows/test.yml/badge.svg)](https://github.com/claybailey2/mozz/actions/workflows/test.yml)
 
-A web application for managing pizza stores, toppings, and chef assignments.
+
+A web application for managing pizza stores, toppings, recipes and chefs.
 
 ## Project Structure
 
 - `/packages/client`: React frontend application
-- `/packages/shared`: Shared TypeScript types and utilities
 - `/packages/supabase`: Database migrations and seed data
 - `DESIGN.md`: Architecture decisions and design documentation
 

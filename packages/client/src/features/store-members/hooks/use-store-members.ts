@@ -52,7 +52,7 @@ export function useSignUpAndAcceptInvite() {
       })
     },
     onError: (error: any) => { // type as any to access status
-      console.log( error )
+      console.error( error )
       if (error?.status === 409) {
         toast({
           variant: 'destructive',
@@ -82,7 +82,7 @@ export function useSignInAndAcceptInvite() {
       })
     },
     onError: (error) => {
-      console.log( error )
+      console.error( error )
       toast({
         variant: 'destructive',
         title: 'Error',
