@@ -12,7 +12,6 @@
     "export-schema": "npm run export-schema --workspace=@pizza-management/server"
   },
   "devDependencies": {
-    "lefthook": "^1.8.1",
     "turbo": "^1.10.16"
   }
 }
