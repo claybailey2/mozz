@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 197 24% 94%; /* antiflash-white */
+    --foreground: 235 21% 21%; /* space-cadet */
+
+    --card: 197 24% 94%; /* antiflash-white */
+    --card-foreground: 235 21% 21%; /* space-cadet */
+
+    --popover: 197 24% 94%; /* antiflash-white */
+    --popover-foreground: 235 21% 21%; /* space-cadet */
+
+    --primary: 15 78% 61%; /* burnt-sienna */
+    --primary-foreground: 197 24% 94%; /* antiflash-white */
+
+    --secondary: 218 17% 62%; /* cool-gray */
+    --secondary-foreground: 197 24% 94%; /* antiflash-white */
+
+    --muted: 218 17% 92%; /* lighter cool-gray */
+    --muted-foreground: 235 21% 40%; /* lighter space-cadet */
+
+    --accent: 218 17% 62%; /* cool-gray */
+    --accent-foreground: 235 21% 21%; /* space-cadet */
+
+    --destructive: 346 100% 42%; /* crimson */
+    --destructive-foreground: 197 24% 94%; /* antiflash-white */
+
+    --border: 218 17% 82%; /* light cool-gray */
+    --input: 218 17% 82%; /* light cool-gray */
+    --ring: 15 78% 61%; /* burnt-sienna */
+
+    --radius: 0.5rem;
+
+    --burnt-sienna-hover: 15 78% 55%;
+    --crimson-hover: 346 100% 37%;
+    --cool-gray-hover: 218 17% 57%;
+  }
+
+  .dark {
+    --background: 235 21% 21%; /* space-cadet */
+    --foreground: 197 24% 94%; /* antiflash-white */
+
+    --card: 235 21% 21%; /* space-cadet */
+    --card-foreground: 197 24% 94%; /* antiflash-white */
+
+    --popover: 235 21% 21%; /* space-cadet */
+    --popover-foreground: 197 24% 94%; /* antiflash-white */
+
+    --primary: 15 78% 61%; /* burnt-sienna */
+    --primary-foreground: 235 21% 21%; /* space-cadet */
+
+    --secondary: 218 17% 62%; /* cool-gray */
+    --secondary-foreground: 235 21% 21%; /* space-cadet */
+
+    --muted: 235 21% 30%; /* darker space-cadet */
+    --muted-foreground: 218 17% 82%; /* light cool-gray */
+
+    --accent: 218 17% 62%; /* cool-gray */
+    --accent-foreground: 197 24% 94%; /* antiflash-white */
+
+    --destructive: 346 100% 42%; /* crimson */
+    --destructive-foreground: 197 24% 94%; /* antiflash-white */
+
+    --border: 218 17% 42%; /* darker cool-gray */
+    --input: 218 17% 42%; /* darker cool-gray */
+    --ring: 15 78% 61%; /* burnt-sienna */
+  }
+}
+
+/* Custom utility classes */
+@layer utilities {
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-burnt-sienna to-crimson;
+  }
+
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-burnt-sienna to-crimson;
+  }
+
+  .hover-gradient {
+    @apply hover:from-crimson/90 hover:to-burnt-sienna/90 transition-colors;
+  }
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -40,6 +40,11 @@ export function PizzaForm({
   const [selectedToppingIds, setSelectedToppingIds] = useState<string[]>(initialToppingIds)
   const [open, setOpen] = useState(false)
   const { data: toppings, isLoading } = useToppings(storeId)
+
+  useEffect(() => {
+    // setName(initialName)
+    // setSelectedToppingIds(initialToppingIds)
+  }, [initialName, initialToppingIds])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

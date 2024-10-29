@@ -1,8 +1,8 @@
 import { supabase } from '../supabase'
 import type { Database } from '@pizza-management/shared'
+import { validateUniqueTopping } from './validators'
 
 export type Topping = Database['public']['Tables']['toppings']['Row']
-type ToppingInsert = Database['public']['Tables']['toppings']['Insert']
 
 export async function getToppings(storeId: string) {
   const { data, error } = await supabase
@@ -15,10 +15,16 @@ export async function getToppings(storeId: string) {
   return data
 }
 
-export async function createTopping(topping: ToppingInsert) {
+export async function createTopping(storeId: string, name: string) {
+  // Validate before creating
+  await validateUniqueTopping(storeId, name)
+
   const { data, error } = await supabase
     .from('toppings')
-    .insert(topping)
+    .insert({
+      store_id: storeId,
+      name
+    })
     .select()
     .single()
 
@@ -26,10 +32,13 @@ export async function createTopping(topping: ToppingInsert) {
   return data
 }
 
-export async function updateTopping(id: string, updates: Partial<Topping>) {
+export async function updateTopping(id: string, storeId: string, name: string) {
+  // Validate before updating
+  await validateUniqueTopping(storeId, name, id)
+
   const { data, error } = await supabase
     .from('toppings')
-    .update(updates)
+    .update({ name })
     .eq('id', id)
     .select()
     .single()

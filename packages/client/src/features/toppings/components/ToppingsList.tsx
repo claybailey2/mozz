@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useToppings, useCreateTopping, useUpdateTopping, useDeleteTopping } from '../hooks/use-toppings'
+import { ToppingBadge } from './ToppingBadge'
 
 export function ToppingsList() {
   const { storeId } = useParams<{ storeId: string }>()
@@ -124,7 +125,7 @@ export function ToppingsList() {
                     </Button>
                   </form>
                 ) : (
-                  topping.name
+                  <ToppingBadge topping={topping} />
                 )}
               </TableCell>
               <TableCell>

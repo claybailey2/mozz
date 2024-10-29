@@ -17,14 +17,22 @@ export async function getStoreMembers(storeId: string) {
   return data as StoreMemberWithEmail[]
 }
 
-export async function inviteChef(storeId: string, email: string) {
+export interface InviteChefData {
+
+  email: string;
+
+  role: 'chef' | 'owner';
+
+}
+
+export async function inviteChef(storeId: string, email: string, role: 'chef' | 'owner' = 'chef') {
   // Create store member record with email
   const { error: memberError } = await supabase
     .from('store_members')
     .insert({
       store_id: storeId,
       email: email.toLowerCase(), // Store email in lowercase for consistency
-      role: 'chef',
+      role,
       status: 'invited'
     })
 
@@ -138,3 +146,19 @@ export async function removeStoreMember(storeId: string, email: string) {
 
   if (error) throw error
 }
+
+export async function checkStoreMembership(storeId: string) {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return false
+
+  const { data, error } = await supabase
+    .from('store_members')
+    .select('id')
+    .eq('store_id', storeId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (error || !data) return false
+  return true
+}
+

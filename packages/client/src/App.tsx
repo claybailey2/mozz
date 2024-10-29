@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AppRoutes } from './routes'
 import { useAuthStore } from './stores/auth-store'
 import { Toaster } from './components/ui/toaster'
+import './styles/theme.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,8 +34,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AppRoutes />
-        <Toaster />
+        <div className="min-h-screen bg-background">
+          <AppRoutes />
+          <Toaster />
+        </div>
       </BrowserRouter>
       <ReactQueryDevtools />
     </QueryClientProvider>

@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getStores, createStore, updateStore, deleteStore } from '@/lib/api/stores'
+import { 
+  getStores, createStore, updateStore, deleteStore, 
+  isStoreOwner, getStore 
+} from '@/lib/api/stores'
 import { useToast } from '@/hooks/use-toast'
 import { useAuthStore } from '@/stores/auth-store'
 
@@ -10,13 +13,30 @@ export function useStores() {
   })
 }
 
+export function useStore(storeId: string) {
+  return useQuery({
+    queryKey: ['stores', storeId],
+    queryFn: () => getStore(storeId),
+  })
+}
+
+export function useIsStoreOwner(storeId: string | undefined) {
+  return useQuery({
+    queryKey: ['store-owner', storeId],
+    queryFn: () => storeId ? isStoreOwner(storeId) : false,
+  })
+}
+
 export function useCreateStore() {
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const user = useAuthStore(state => state.user)
 
   return useMutation({
-    mutationFn: (name: string) => createStore({ name, owner_id: user!.id }),
+    mutationFn: (name: string) => {
+      if (!user?.email) throw new Error('User email not found')
+      return createStore(name, user.email)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stores'] })
       toast({

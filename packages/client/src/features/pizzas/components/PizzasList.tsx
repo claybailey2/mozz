@@ -21,8 +21,8 @@ import {
 } from '@/components/ui/alert-dialog'
 import { PizzaForm } from './PizzasForm'
 import { usePizzas, useCreatePizza, useUpdatePizza, useDeletePizza } from '../hooks/use-pizzas'
-import { Badge } from '@/components/ui/badge'
 import { Topping } from '@/lib/api/toppings'
+import { ToppingBadge } from '@/features/toppings/components/ToppingBadge'
 
 export function PizzasList() {
   const { storeId } = useParams<{ storeId: string }>()
@@ -32,6 +32,7 @@ export function PizzasList() {
   const createPizza = useCreatePizza(storeId)
   const updatePizza = useUpdatePizza(storeId)
   const deletePizza = useDeletePizza(storeId)
+
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [editingPizza, setEditingPizza] = useState<any | null>(null)
@@ -85,39 +86,38 @@ export function PizzasList() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {pizzas?.map((pizza) => {
           return (
-          <Card key={pizza.id}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-medium">
-                {pizza.name}
-              </CardTitle>
-              <div className="flex gap-2">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setEditingPizza(pizza)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="destructive"
-                  onClick={() => setPizzaToDelete(pizza.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {pizza.pizza_toppings.map(({ topping }: { topping: Topping }) => (
-                  <Badge key={topping.id} variant="secondary">
-                    {topping.name}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )})}
+            <Card key={pizza.id}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-medium">
+                  {pizza.name}
+                </CardTitle>
+                <div className="flex gap-2">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => setEditingPizza(pizza)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => setPizzaToDelete(pizza.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {pizza.pizza_toppings.map(({ topping }: { topping: Topping }) => (
+                    <ToppingBadge key={topping.id} topping={topping} />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -142,9 +142,7 @@ export function PizzasList() {
             <PizzaForm
               storeId={storeId}
               initialName={editingPizza.name}
-              initialToppingIds={editingPizza.pizza_toppings?.map(
-                (pt: any) => pt.topping_id
-              )}
+              initialToppingIds={editingPizza?.pizza_toppings?.map((pt: any) => pt.topping.id)}
               onSubmit={handleUpdatePizza}
               isSubmitting={updatePizza.isPending}
             />
@@ -162,7 +160,7 @@ export function PizzasList() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDeletePizza}
               className="bg-red-600 hover:bg-red-700"
             >

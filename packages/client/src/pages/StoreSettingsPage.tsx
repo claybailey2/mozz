@@ -1,20 +1,22 @@
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StoreMembersList } from '@/features/store-members/components/StoreMembersList'
 
 export function StoreSettingsPage() {
+  const { storeId } = useParams<{ storeId: string }>()
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button asChild variant="ghost" size="sm">
-          <Link to="/stores">
+          <Link to={`/stores/${storeId}`}>
             <ChevronLeft className="w-4 h-4 mr-1" />
-            Back to Stores
+            Back to Store
           </Link>
         </Button>
       </div>
-      
+
       <div>
         <h1 className="text-3xl font-bold">Store Settings</h1>
         <p className="text-muted-foreground">

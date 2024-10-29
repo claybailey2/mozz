@@ -29,3 +29,6 @@ dist-ssr
 
 # Turbo
 .turbo
+
+# Supabase
+packages/server/supabase/.env

@@ -5,6 +5,8 @@ import {
   signInAndAcceptInvite,
   inviteChef,
   removeStoreMember,
+  InviteChefData,
+  checkStoreMembership,
 } from '@/lib/api/store-members'
 import { useToast } from '@/hooks/use-toast'
 
@@ -20,7 +22,7 @@ export function useInviteChef(storeId: string) {
   const { toast } = useToast()
 
   return useMutation({
-    mutationFn: (email: string) => inviteChef(storeId, email),
+    mutationFn: ({email, role}: InviteChefData) => inviteChef(storeId, email, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['store-members', storeId] })
       toast({
@@ -50,6 +52,7 @@ export function useSignUpAndAcceptInvite() {
       })
     },
     onError: (error: any) => { // type as any to access status
+      console.log( error )
       if (error?.status === 409) {
         toast({
           variant: 'destructive',
@@ -79,6 +82,7 @@ export function useSignInAndAcceptInvite() {
       })
     },
     onError: (error) => {
+      console.log( error )
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -109,5 +113,13 @@ export function useRemoveStoreMember(storeId: string) {
         description: error instanceof Error ? error.message : 'Failed to remove member',
       })
     },
+  })
+}
+
+export function useCheckStoreMembership(storeId: string | undefined) {
+  return useQuery({
+    queryKey: ['store-membership', storeId],
+    queryFn: () => storeId ? checkStoreMembership(storeId) : false,
+    enabled: !!storeId,
   })
 }

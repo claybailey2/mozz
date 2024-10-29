@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getPizzas, createPizza, updatePizza, deletePizza } from '@/lib/api/pizzas'
-import { useAuthStore } from '@/stores/auth-store'
 import { useToast } from '@/hooks/use-toast'
+import { ValidationError } from '@/lib/api/validators'
+import { useAuthStore } from '@/stores/auth-store'
 
 export function usePizzas(storeId: string) {
   return useQuery({
@@ -16,11 +17,10 @@ export function useCreatePizza(storeId: string) {
   const user = useAuthStore(state => state.user)
 
   return useMutation({
-    mutationFn: ({ name, toppingIds }: { name: string; toppingIds: string[] }) =>
-      createPizza(
-        { name, store_id: storeId, created_by: user!.id },
-        toppingIds
-      ),
+    mutationFn: ({ name, toppingIds }: { name: string; toppingIds: string[] }) => {
+      if (!user?.id) throw new Error('User not authenticated')
+      return createPizza(storeId, name, toppingIds, user.id)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pizzas', storeId] })
       toast({
@@ -32,7 +32,7 @@ export function useCreatePizza(storeId: string) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create pizza',
+        description: error instanceof ValidationError ? error.message : 'Failed to create pizza',
       })
     },
   })
@@ -51,7 +51,7 @@ export function useUpdatePizza(storeId: string) {
       id: string; 
       name: string; 
       toppingIds: string[] 
-    }) => updatePizza(id, { name }, toppingIds),
+    }) => updatePizza(id, storeId, name, toppingIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pizzas', storeId] })
       toast({
@@ -63,7 +63,7 @@ export function useUpdatePizza(storeId: string) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to update pizza',
+        description: error instanceof ValidationError ? error.message : 'Failed to update pizza',
       })
     },
   })
@@ -86,7 +86,7 @@ export function useDeletePizza(storeId: string) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to delete pizza',
+        description: error instanceof ValidationError ? error.message : 'Failed to delete pizza',
       })
     },
   })

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth-store'
 import { Button } from '@/components/ui/button'
@@ -36,7 +36,7 @@ export function AcceptInvitePage() {
     }
   }, [user, storeId])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     if (!storeId) return
 
@@ -53,7 +53,7 @@ export function AcceptInvitePage() {
         setIsSignIn(true)
       }
     }
-  }
+  }, [email, password, isSignIn, storeId, signUpAndAccept, signInAndAccept, navigate])
 
   if (!storeId) {
     return (
