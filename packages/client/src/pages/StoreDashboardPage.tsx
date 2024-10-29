@@ -5,7 +5,7 @@ import {
   ChevronLeft
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -58,24 +58,81 @@ export function StoreDashboardPage() {
 
       <div className="grid gap-6 md:grid-cols-3">
 
+        {/* Toppings Table */}
+        <Card>
+          <CardHeader className="flex flex-col items-between justify-center">
+            <CardTitle className="flex h-12 items-center gap-2">
+              <ShoppingBasket className="h-5 w-5 text-crimson" />
+              Toppings
+              <RequireStoreOwner>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className="text-crimson hover:text-crimson hover:bg-crimson/10"
+                >
+                  <Link to={`/stores/${storeId}/toppings`}>
+                    Manage
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Link>
+                </Button>
+              </RequireStoreOwner>
+            </CardTitle>
+            <CardDescription>
+              Stock your pantry with delicious ingredients.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {
+                  toppings.data && toppings.data.length > 0 ?
+                    toppings.data.map((topping) => (
+                      <TableRow key={topping.id} onClick={() => isOwner ? navigate(`toppings`) : null}>
+                        <TableCell>
+                          <ToppingBadge topping={topping} />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                    : (
+                      <TableRow>
+                        <TableCell>
+                          No toppings available.
+                          <Link to={`/stores/${storeId}/toppings`} className="text-blue-500"> Add some!</Link>
+                        </TableCell>
+                      </TableRow>
+                    )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
         {/* Pizzas Table */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col items-between justify-center">
             <CardTitle className="flex h-12 items-center gap-2">
               <Pizza className="h-5 w-5 text-burnt-sienna" />
               Pizzas
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-burnt-sienna hover:text-burnt-sienna hover:bg-burnt-sienna/10"
+              >
+                <Link to={`/stores/${storeId}/pizzas`}>
+                  Manage
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
+              </Button>
             </CardTitle>
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              className="text-burnt-sienna hover:text-burnt-sienna hover:bg-burnt-sienna/10"
-            >
-              <Link to={`/stores/${storeId}/pizzas`}>
-                Manage
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Link>
-            </Button>
+            <CardDescription>
+              Craft your pizza creations with the toppings you have available.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -86,61 +143,34 @@ export function StoreDashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pizzas?.map((pizza) => {
-                  return (
-                    <TableRow key={pizza.id} onClick={() => navigate(`pizzas`)}>
-                      <TableCell className="font-medium">
-                        {pizza.name}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="secondary">
-                          {pizza.pizza_toppings.length}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        {/* Toppings Table */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex h-12 items-center gap-2">
-              <ShoppingBasket className="h-5 w-5 text-crimson" />
-              Toppings
-            </CardTitle>
-            <RequireStoreOwner>
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="text-crimson hover:text-crimson hover:bg-crimson/10"
-              >
-                <Link to={`/stores/${storeId}/toppings`}>
-                  Manage
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </Button>
-            </RequireStoreOwner>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {toppings.data?.map((topping) => (
-                  <TableRow key={topping.id} onClick={() => isOwner ? navigate(`toppings`) : null}>
-                    <TableCell>
-                      <ToppingBadge topping={topping} />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {
+                  pizzas && pizzas.length > 0 ?
+                    pizzas?.map((pizza) => {
+                      return (
+                        <TableRow key={pizza.id} onClick={() => navigate(`pizzas`)}>
+                          <TableCell className="font-medium">
+                            {pizza.name}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">
+                              {pizza.pizza_toppings.length}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })
+                    : (
+                      <TableRow>
+                        <TableCell>
+                          No pizzas available.
+                          {
+                            toppings.data && toppings.data.length > 0
+                              ? <Link to={`/stores/${storeId}/pizzas`} className="text-blue-500"> Make some!</Link>
+                              : <Link to={`/stores/${storeId}/toppings`} className="text-blue-500"> Add some toppings first!</Link>
+                          }
+                        </TableCell>
+                      </TableRow>
+                    )}
               </TableBody>
             </Table>
           </CardContent>
@@ -148,24 +178,27 @@ export function StoreDashboardPage() {
 
         {/* Store Members Table */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col items-between justify-center">
             <CardTitle className="flex h-12 items-center gap-2">
               <Users className="h-5 w-5 text-cool-gray" />
               Store Members
+              <RequireStoreOwner>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className="text-cool-gray hover:text-cool-gray hover:bg-cool-gray/10"
+                >
+                  <Link to={`/stores/${storeId}/settings`}>
+                    Manage
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Link>
+                </Button>
+              </RequireStoreOwner>
             </CardTitle>
-            <RequireStoreOwner>
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="text-cool-gray hover:text-cool-gray hover:bg-cool-gray/10"
-              >
-                <Link to={`/stores/${storeId}/settings`}>
-                  Manage
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </Button>
-            </RequireStoreOwner>
+            <CardDescription>
+              Grow your team of pizza artists and business partners.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>

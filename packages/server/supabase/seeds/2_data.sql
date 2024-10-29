@@ -13,56 +13,63 @@ VALUES
 
 -- Insert store members (owners and chefs)
 INSERT INTO
-  public.store_members (store_id, role, status, user_id)
+  public.store_members (store_id, role, status, email, user_id)
 VALUES
   (
     '11111111-1111-1111-1111-111111111111',
     'owner',
     'active',
-    --'owner@downtown.com'
+    'owner@downtown.com',
     '98765432-1234-5678-1234-567812345678'
   ),
   (
     '11111111-1111-1111-1111-111111111111',
     'owner',
     'active',
-    --'jack@alltrades.com'
+    'jack@alltrades.com',
     '76543210-1234-5678-1234-567812345678'
   ),
   (
     '11111111-1111-1111-1111-111111111111',
     'chef',
     'invited',
-    --'chef1@downtown.com'
+    'chef1@downtown.com',
     '54321098-1234-5678-1234-567812345678'
   ),
   (
     '11111111-1111-1111-1111-111111111111',
     'chef',
     'invited',
-    --'chef2@downtown.com'
+    'chef2@downtown.com',
     '32109876-1234-5678-1234-567812345678'
   ),
   (
     '22222222-2222-2222-2222-222222222222',
     'owner',
     'active',
-    --'owner@uptown.com'
+    'owner@uptown.com',
     '76543210-1234-5678-1234-567812345678'
   ),
   (
     '22222222-2222-2222-2222-222222222222',
     'chef',
     'active',
-    --'jack@alltrades.com'
+    'jack@alltrades.com',
     '10987654-1234-5678-1234-567812345678'
   ),
   (
     '22222222-2222-2222-2222-222222222222',
     'chef',
     'invited',
-    --'chef1@uptown.com'
+    'chef1@uptown.com',
     '56465468-6646-4868-4894-646876435468'
+  ),
+  (
+    '22222222-2222-2222-2222-222222222222',
+    'chef',
+    'invited',
+    'new.chef@midtown.com',
+    NULL -- No user_id for newly invited chefs
   );
 
 -- Insert toppings for each store

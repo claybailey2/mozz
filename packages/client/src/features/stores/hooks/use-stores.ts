@@ -4,19 +4,25 @@ import {
   isStoreOwner, getStore 
 } from '@/lib/api/stores'
 import { useToast } from '@/hooks/use-toast'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/zustand/auth-store'
 
 export function useStores() {
+  const user = useAuthStore(state => state.user)
+  
   return useQuery({
-    queryKey: ['stores'],
+    queryKey: ['stores', user?.id],
     queryFn: getStores,
+    enabled: !!user
   })
 }
 
 export function useStore(storeId: string) {
+  const user = useAuthStore(state => state.user)
+  
   return useQuery({
-    queryKey: ['stores', storeId],
+    queryKey: ['stores', user?.id, storeId],
     queryFn: () => getStore(storeId),
+    enabled: !!user
   })
 }
 

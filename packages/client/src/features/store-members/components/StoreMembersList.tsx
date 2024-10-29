@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Plus, UserX, Crown, ChefHat } from 'lucide-react'
+import { Plus, UserX, Crown, ChefHat, MoreVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -29,6 +29,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Badge } from '@/components/ui/badge'
 import { useStoreMembers, useInviteChef, useRemoveStoreMember } from '../hooks/use-store-members'
 import { cn } from '@/lib/utils'
@@ -77,7 +83,7 @@ export function StoreMembersList() {
     if (!memberToRemove) return
 
     try {
-      await removeMember.mutateAsync(memberToRemove.id)
+      await removeMember.mutateAsync(memberToRemove.email)
       setMemberToRemove(null)
     } catch (error) {
       console.error('Failed to remove member:', error)
@@ -94,26 +100,78 @@ export function StoreMembersList() {
     <div className="space-y-6">
       <Button 
         onClick={() => setIsInviteDialogOpen(true)}
-        className="bg-gradient-to-r from-crimson to-burnt-sienna"
+        className="bg-gradient-to-r from-crimson to-burnt-sienna w-full sm:w-auto"
       >
         <Plus className="w-4 h-4 mr-2" />
         Invite Member
       </Button>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {members?.map((member) => (
-            <TableRow key={member.id}>
-              <TableCell>{member.user_email}</TableCell>
-              <TableCell>
+      {/* Desktop Table View */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {members?.map((member) => (
+              <TableRow key={member.id}>
+                <TableCell>{member.email}</TableCell>
+                <TableCell>
+                  <Badge 
+                    variant="secondary"
+                    className={cn(
+                      "flex w-fit items-center gap-2",
+                      getRoleBadgeStyles(member.role)
+                    )}
+                  >
+                    {member.role === 'owner' 
+                      ? <Crown className="h-3 w-3" />
+                      : <ChefHat className="h-3 w-3" />
+                    }
+                    {member.role}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
+                    {member.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {member.role !== 'owner' && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setMemberToRemove({ 
+                        id: member.id, 
+                        email: member.email 
+                      })}
+                      className="hover:text-red-600 hover:bg-red-50"
+                    >
+                      <UserX className="h-4 w-4" />
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {members?.map((member) => (
+          <div 
+            key={member.id} 
+            className="border rounded-lg p-4 space-y-3 bg-card"
+          >
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <div className="font-medium break-all">{member.email}</div>
                 <Badge 
                   variant="secondary"
                   className={cn(
@@ -127,34 +185,39 @@ export function StoreMembersList() {
                   }
                   {member.role}
                 </Badge>
-              </TableCell>
-              <TableCell>
-                <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
-                  {member.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                {member.role !== 'owner' && (
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => setMemberToRemove({ 
-                      id: member.id, 
-                      email: member.user_email 
-                    })}
-                    className="hover:text-red-600 hover:bg-red-50"
-                  >
-                    <UserX className="h-4 w-4" />
-                  </Button>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+              </div>
+              {member.role !== 'owner' && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      className="text-red-600"
+                      onClick={() => setMemberToRemove({ 
+                        id: member.id, 
+                        email: member.email 
+                      })}
+                    >
+                      <UserX className="h-4 w-4 mr-2" />
+                      Remove
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+            <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
+              {member.status}
+            </Badge>
+          </div>
+        ))}
+      </div>
 
+      {/* Rest of the dialogs remain unchanged */}
       <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Invite Store Member</DialogTitle>
           </DialogHeader>

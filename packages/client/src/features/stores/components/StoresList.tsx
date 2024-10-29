@@ -73,7 +73,7 @@ export function StoresList() {
   const handleUpdateStore = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingStore || !editingStore.name.trim()) return
-  
+
     try {
       await updateStore.mutateAsync({
         id: editingStore.id,
@@ -112,115 +112,123 @@ export function StoresList() {
       </form>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {stores?.map((store) => (
-          <Card key={store.id} className="group">
-            <div
-              className="cursor-pointer transition-colors hover:bg-slate-50"
-              onClick={() => navigate(`/stores/${store.id}`)}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="space-y-1.5">
-                  <CardTitle className="text-xl font-semibold text-crimson">
-                    {editingStore && editingStore.id === store.id ? (
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault()
-                          handleUpdateStore(e)
-                        }}
+        {
+          stores && stores.length > 0
+            ? stores?.map((store) => (
+              <Card key={store.id} className="group">
+                <div
+                  className="cursor-pointer transition-colors hover:bg-slate-50"
+                  onClick={() => navigate(`/stores/${store.id}`)}
+                >
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="space-y-1.5">
+                      <CardTitle className="text-xl font-semibold text-crimson">
+                        {editingStore && editingStore.id === store.id ? (
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault()
+                              handleUpdateStore(e)
+                            }}
+                            className="flex gap-2"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Input
+                              value={editingStore.name} // Use editingStore.name instead of newStoreName
+                              onChange={(e) => setEditingStore({
+                                ...editingStore,
+                                name: e.target.value
+                              })}
+                              className="h-8"
+                              autoFocus
+                            />
+                            <Button
+                              type="submit"
+                              size="sm"
+                              disabled={updateStore.isPending}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingStore(null)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </form>
+                        ) : (
+                          <div className='flex flex-row gap-3 items-center hover:underline'>
+                            <Store className="h-4 w-4" />
+                            {store.name}
+                          </div>
+                        )}
+                      </CardTitle>
+                      <RoleBadge role={store.userRole} />
+                    </div>
+                    {editingStore?.id !== store.id && store.userRole === 'owner' && (
+                      <div
                         className="flex gap-2"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Input
-                          value={editingStore.name} // Use editingStore.name instead of newStoreName
-                          onChange={(e) => setEditingStore({
-                            ...editingStore,
-                            name: e.target.value
-                          })}
-                          className="h-8"
-                          autoFocus
-                        />
                         <Button
-                          type="submit"
-                          size="sm"
-                          disabled={updateStore.isPending}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          type="button"
-                          size="sm"
+                          size="icon"
                           variant="outline"
-                          onClick={() => setEditingStore(null)}
+                          onClick={() => setEditingStore(store)}
                         >
-                          <X className="h-4 w-4" />
+                          <Pencil className="h-4 w-4" />
                         </Button>
-                      </form>
-                    ) : (
-                      <div className='flex flex-row gap-3 items-center hover:underline'>
-                        <Store className="h-4 w-4" />
-                        {store.name}
+                        <Button
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => setStoreToDelete(store.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     )}
-                  </CardTitle>
-                  <RoleBadge role={store.userRole} />
-                </div>
-                {editingStore?.id !== store.id && store.userRole === 'owner' && (
-                  <div
-                    className="flex gap-2"
+                  </CardHeader>
+                  <CardContent
+                    className="relative"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      onClick={() => setEditingStore(store)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      onClick={() => setStoreToDelete(store.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </CardHeader>
-              <CardContent
-                className="relative"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex gap-2">
-                  <Button
-                    asChild
-                    variant="default"
-                    size="sm"
-                    className="bg-gradient-to-r from-crimson to-burnt-sienna hover:from-crimson/90 hover:to-burnt-sienna/90"
-                  >
-                    <Link to={`/stores/${store.id}/pizzas`}>
-                      <Pizza className="h-4 w-4 mr-2" />
-                      Pizzas
-                    </Link>
-                  </Button>
-                  <RequireStoreOwner storeId={store.id}>
-                    <Button asChild variant="outline" size="sm">
-                      <Link to={`/stores/${store.id}/toppings`}>
-                        <ShoppingBasket className="h-4 w-4 mr-2" />
-                        Toppings
-                      </Link>
-                    </Button>
-                    <Button asChild variant="outline" size="sm">
-                      <Link to={`/stores/${store.id}/settings`}>
-                        <Settings className="h-4 w-4 mr-2" />
-                        Settings
-                      </Link>
-                    </Button>
-                  </RequireStoreOwner>
+                    <div className="flex gap-2 flex-wrap">
+                      <Button
+                        asChild
+                        variant="default"
+                        size="sm"
+                        className="bg-gradient-to-r from-crimson to-burnt-sienna hover:from-crimson/90 hover:to-burnt-sienna/90"
+                      >
+                        <Link to={`/stores/${store.id}/pizzas`}>
+                          <Pizza className="h-4 w-4 mr-2" />
+                          Pizzas
+                        </Link>
+                      </Button>
+                      <RequireStoreOwner storeId={store.id}>
+                        <Button asChild variant="outline" size="sm">
+                          <Link to={`/stores/${store.id}/toppings`}>
+                            <ShoppingBasket className="h-4 w-4 mr-2" />
+                            Toppings
+                          </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm">
+                          <Link to={`/stores/${store.id}/settings`}>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Settings
+                          </Link>
+                        </Button>
+                      </RequireStoreOwner>
+                    </div>
+                  </CardContent>
                 </div>
-              </CardContent>
-            </div>
-          </Card>
-        ))}
+              </Card>
+            ))
+            : (
+              <div className='text-crimson font-semibold'>
+                Add a store and begin your pizza journey!
+              </div>
+            )
+        }
       </div>
 
       <AlertDialog open={!!storeToDelete} onOpenChange={() => setStoreToDelete(null)}>

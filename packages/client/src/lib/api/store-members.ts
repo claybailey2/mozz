@@ -2,57 +2,104 @@ import { supabase } from '../supabase'
 import type { Database } from '@pizza-management/shared'
 
 type StoreMember = Database['public']['Tables']['store_members']['Row']
-type StoreMemberWithEmail = StoreMember & {
-  user_email: string
+
+export async function checkEmailRegistered(email: string): Promise<boolean> {
+  try {
+    // Try to select the email from registered_emails
+    const { error } = await supabase
+      .from('registered_emails')
+      .select('email')
+      .eq('email', email.toLowerCase())
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {  // not_found error
+        return false
+      }
+      throw error
+    }
+
+    return true
+  } catch (error) {
+    console.error('Error checking email registration:', error)
+    throw error
+  }
 }
 
 export async function getStoreMembers(storeId: string) {
   const { data, error } = await supabase
-    .from('store_members_with_email')
+    .from('store_members')
     .select('*')
     .eq('store_id', storeId)
-    .order('created_at', { ascending: false })
+    .order('role', { ascending: false })
+    .order('email', { ascending: true })
 
   if (error) throw error
-  return data as StoreMemberWithEmail[]
+  return data as StoreMember[]
 }
 
 export interface InviteChefData {
-
   email: string;
-
   role: 'chef' | 'owner';
-
 }
 
-export async function inviteChef(storeId: string, email: string, role: 'chef' | 'owner' = 'chef') {
-  // Create store member record with email
-  const { error: memberError } = await supabase
-    .from('store_members')
-    .insert({
-      store_id: storeId,
-      email: email.toLowerCase(), // Store email in lowercase for consistency
-      role,
-      status: 'invited'
+const apiUrl = import.meta.env.DEV 
+  ? 'http://localhost:3000/api/invitations'
+  : '/api/invitations'
+
+
+export async function inviteToStore(storeId: string, email: string, role: 'chef' | 'owner' = 'chef') {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Must be logged in to invite members')
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: email.toLowerCase(),
+      storeId,
+      inviterId: user.id,
+      role
     })
+  })
 
-  if (memberError) throw memberError
-
-  // Send invitation email
-  const { error: emailError } = await supabase.auth.resetPasswordForEmail(
-    email,
-    {
-      redirectTo: `${window.location.origin}/accept-invite?store_id=${storeId}`,
-    }
-  )
-
-  // If email fails, we still keep the invitation record
-  if (emailError) {
-    console.error('Failed to send invitation email:', emailError)
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message || 'Failed to send invitation')
   }
+
+  return response.json()
 }
 
-export async function signUpAndAcceptInvite({ 
+// Update the accept invitation logic to handle both new and existing users
+export async function acceptStoreInvitation({ 
+  email, 
+  storeId 
+}: { 
+  email: string
+  storeId: string 
+}) {
+  // Update invitation status
+  const { error: updateError } = await supabase
+    .from('store_members')
+    .update({ 
+      status: 'active',
+      user_id: (await supabase.auth.getUser()).data.user?.id
+    })
+    .eq('email', email.toLowerCase())
+    .eq('store_id', storeId)
+    .eq('status', 'invited')
+
+  if (updateError) throw updateError
+}
+export interface InviteChefData {
+  email: string;
+  role: 'chef' | 'owner';
+}
+
+export async function signUpFromInvitation({ 
   email, 
   password, 
   storeId 
@@ -70,7 +117,7 @@ export async function signUpAndAcceptInvite({
   if (signUpError) throw signUpError
   if (!signUpData.user) throw new Error('Failed to create account')
 
-  // Update any pending invitations with this email to include the user_id
+  // Update store member with new user_id
   const { error: updateError } = await supabase
     .from('store_members')
     .update({ 
@@ -86,63 +133,12 @@ export async function signUpAndAcceptInvite({
   return signUpData.user
 }
 
-export async function signInAndAcceptInvite({ 
-  email, 
-  password, 
-  storeId 
-}: { 
-  email: string
-  password: string
-  storeId: string 
-}) {
-  // Sign in the user
-  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  })
-
-  if (signInError) throw signInError
-  if (!signInData.user) throw new Error('Failed to sign in')
-
-  // Update invitation status
-  const { error: updateError } = await supabase
-    .from('store_members')
-    .update({ 
-      user_id: signInData.user.id,
-      status: 'active' 
-    })
-    .eq('email', email.toLowerCase())
-    .eq('store_id', storeId)
-    .eq('status', 'invited')
-
-  if (updateError) throw updateError
-
-  return signInData.user
-}
-
-// Function to check if user has pending invitations
-export async function getPendingInvitations(email: string) {
-  const { data, error } = await supabase
-    .from('store_members')
-    .select(`
-      *,
-      store:stores (
-        name
-      )
-    `)
-    .eq('email', email.toLowerCase())
-    .eq('status', 'invited')
-
-  if (error) throw error
-  return data
-}
-
 export async function removeStoreMember(storeId: string, email: string) {
   const { error } = await supabase
     .from('store_members')
     .delete()
     .eq('store_id', storeId)
-    .eq('email', email.toLowerCase())
+    .eq('email', email)
 
   if (error) throw error
 }
@@ -155,10 +151,9 @@ export async function checkStoreMembership(storeId: string) {
     .from('store_members')
     .select('id')
     .eq('store_id', storeId)
-    .eq('user_id', user.id)
+    .eq('email', user.email)
     .single()
 
   if (error || !data) return false
   return true
 }
-

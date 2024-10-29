@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/zustand/auth-store'
 import { useToast } from '@/hooks/use-toast'
 
 export function SignupForm() {
@@ -24,7 +24,7 @@ export function SignupForm() {
         title: "Success!",
         description: "Please check your email to confirm your account.",
       })
-      navigate('/login')
+      navigate('/stores')
     } catch (error) {
       toast({
         variant: "destructive",

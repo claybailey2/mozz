@@ -1,0 +1,22 @@
+<!-- New User Signup Template -->
+<div style="background-color: #F2F4F7; padding: 40px 0;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); overflow: hidden;">
+    <div style="padding: 40px;">
+      <img src="https://www.mozz.online/logo_full.png" alt="Mozz Logo" style="height: 64px; margin-bottom: 24px;" />
+      
+      <h1 style="margin: 0 0 16px; font-family: serif; font-size: 24px; background: linear-gradient(to right, #E94E77, #F27059); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Welcome to Mozz Pizza Manager!
+      </h1>
+      
+      <p style="margin: 0 0 24px; color: #475569; font-size: 16px; line-height: 24px;">
+        You've been invited to join Mozz Pizza Manager. Create your account to get started and join your store's team!
+      </p>
+      
+      <a href="{{ .SiteURL }}/signup?store_id={{ .AdditionalData.store_id }}&email={{ .Email }}" 
+         style="display: inline-block; padding: 12px 24px; background: linear-gradient(to right, #E94E77, #F27059); color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+        Create Account
+      </a>
+    </div>
+  </div>
+</div>
+

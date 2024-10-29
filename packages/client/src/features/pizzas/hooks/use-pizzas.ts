@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getPizzas, createPizza, updatePizza, deletePizza } from '@/lib/api/pizzas'
 import { useToast } from '@/hooks/use-toast'
 import { ValidationError } from '@/lib/api/validators'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/zustand/auth-store'
 
 export function usePizzas(storeId: string) {
   return useQuery({

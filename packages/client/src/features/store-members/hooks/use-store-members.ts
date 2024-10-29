@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { 
   getStoreMembers, 
-  signUpAndAcceptInvite,
-  signInAndAcceptInvite,
-  inviteChef,
+  signUpFromInvitation,
+  acceptStoreInvitation,
   removeStoreMember,
   InviteChefData,
   checkStoreMembership,
 } from '@/lib/api/store-members'
 import { useToast } from '@/hooks/use-toast'
+import { inviteToStore } from '@/lib/api/invitations'
 
 export function useStoreMembers(storeId: string) {
   return useQuery({
@@ -22,19 +22,19 @@ export function useInviteChef(storeId: string) {
   const { toast } = useToast()
 
   return useMutation({
-    mutationFn: ({email, role}: InviteChefData) => inviteChef(storeId, email, role),
+    mutationFn: ({email, role}: InviteChefData) => inviteToStore(storeId, email, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['store-members', storeId] })
       toast({
         title: 'Success',
-        description: 'Chef invitation sent successfully',
+        description: 'Invitation sent successfully',
       })
     },
     onError: (error) => {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to invite chef',
+        description: error instanceof Error ? error.message : 'Failed to send invitation',
       })
     },
   })
@@ -44,7 +44,7 @@ export function useSignUpAndAcceptInvite() {
   const { toast } = useToast()
 
   return useMutation({
-    mutationFn: signUpAndAcceptInvite,
+    mutationFn: signUpFromInvitation,
     onSuccess: () => {
       toast({
         title: 'Success',
@@ -74,7 +74,7 @@ export function useSignInAndAcceptInvite() {
   const { toast } = useToast()
 
   return useMutation({
-    mutationFn: signInAndAcceptInvite,
+    mutationFn: acceptStoreInvitation,
     onSuccess: () => {
       toast({
         title: 'Success',

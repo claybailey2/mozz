@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Check, ChevronsUpDown } from "lucide-react"
+import { useEffect, useMemo, useState } from 'react'
+import { Check, ChevronsUpDown, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { useToppings } from '@/features/toppings/hooks/use-toppings'
+import { useToppings, useCreateTopping } from '@/features/toppings/hooks/use-toppings'
 import { CommandList } from 'cmdk'
 
 interface PizzaFormProps {
@@ -39,12 +39,10 @@ export function PizzaForm({
   const [name, setName] = useState(initialName)
   const [selectedToppingIds, setSelectedToppingIds] = useState<string[]>(initialToppingIds)
   const [open, setOpen] = useState(false)
-  const { data: toppings, isLoading } = useToppings(storeId)
+  const [searchValue, setSearchValue] = useState('')
 
-  useEffect(() => {
-    // setName(initialName)
-    // setSelectedToppingIds(initialToppingIds)
-  }, [initialName, initialToppingIds])
+  const { data: toppings, isLoading } = useToppings(storeId)
+  const createTopping = useCreateTopping(storeId)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,6 +55,19 @@ export function PizzaForm({
         ? current.filter(id => id !== toppingId)
         : [...current, toppingId]
     )
+  }
+
+  const handleCreateTopping = async (name: string) => {
+    try {
+      const newTopping = await createTopping.mutateAsync(name)
+      // If the mutation returns the new topping, add it to selected
+      if (newTopping?.id) {
+        setSelectedToppingIds(current => [...current, newTopping.id])
+      }
+      setSearchValue('')
+    } catch (error) {
+      console.error('Failed to create topping:', error)
+    }
   }
 
   const getSelectedToppingsText = () => {
@@ -72,6 +83,10 @@ export function PizzaForm({
       ? `${selectedToppingIds.length} selected`
       : selectedNames
   }
+
+  const shouldShowCreateOption = useMemo(() =>
+    searchValue.length > 0 && !isLoading && !toppings?.some(topping => topping.name.toLowerCase() === searchValue.toLowerCase())
+    , [searchValue, toppings])
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,9 +117,13 @@ export function PizzaForm({
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0">
             <Command>
-              <CommandInput placeholder="Search toppings..." />
-              <CommandEmpty>No toppings found.</CommandEmpty>
+              <CommandInput
+                placeholder="Search toppings..."
+                value={searchValue}
+                onValueChange={setSearchValue}
+              />
               <CommandList>
+                {!shouldShowCreateOption && <CommandEmpty>No toppings found.</CommandEmpty>}
                 <CommandGroup>
                   {isLoading ? (
                     <CommandItem disabled>Loading toppings...</CommandItem>
@@ -127,6 +146,16 @@ export function PizzaForm({
                       {topping.name}
                     </CommandItem>
                   ))}
+                  {shouldShowCreateOption && (
+                    <CommandItem
+                      onSelect={() => handleCreateTopping(searchValue)}
+                      disabled={createTopping.isPending}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add new topping "{searchValue}"
+                    </CommandItem>
+                  )}
                 </CommandGroup>
               </CommandList>
             </Command>

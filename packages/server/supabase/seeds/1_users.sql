@@ -1,4 +1,6 @@
 -- Seed data for development environment
+-- Based on the following github gist:
+-- https://gist.github.com/khattaksd/4e8f4c89f4e928a2ecaad56d4a17ecd1
 -- Insert users.
 INSERT INTO
   auth.users (

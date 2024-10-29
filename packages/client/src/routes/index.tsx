@@ -6,11 +6,12 @@ import { StoresPage } from '../pages/StoresPage'
 import { StoreDashboardPage } from '../pages/StoreDashboardPage'
 import { ToppingsPage } from '../pages/ToppingsPage'
 import { PizzasPage } from '../pages/PizzasPage'
+import { SignupFromInvitePage } from '@/pages/SignUpFromInvitePage'
+import { JoinStorePage } from '@/pages/JoinStorePage'
 import { StoreSettingsPage } from '../pages/StoreSettingsPage'
-import { AcceptInvitePage } from '../pages/AcceptInvitePage'
 import { RequireStoreMember } from '../features/store-members/components/RequireStoreMember'
 import { RequireStoreOwner } from '../features/stores/components/RequireStoreOwner'
-import { useAuthStore } from '../stores/auth-store'
+import { useAuthStore } from '../zustand/auth-store'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((state) => state.user)
@@ -29,6 +30,8 @@ export function AppRoutes() {
       <Route element={<RootLayout showAuthNav={true} />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/signup" element={<SignupFromInvitePage />} />
+        <Route path="/join-store" element={<JoinStorePage />} />
       </Route>
       
       {/* Protected routes */}
@@ -64,7 +67,6 @@ export function AppRoutes() {
         } />
       </Route>
       
-      <Route path="/accept-invite" element={<AcceptInvitePage />} />
     </Routes>
   )
 }
