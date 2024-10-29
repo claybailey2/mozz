@@ -1,5 +1,5 @@
 -- WARNING: This file is auto-generated. Do not edit directly.
--- Generated on Mon Oct 28 17:38:56 MST 2024
+-- Generated on Mon Oct 28 23:44:51 MST 2024
 
 
 
@@ -67,6 +67,21 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 
 
 
+
+CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+BEGIN
+  INSERT INTO public.registered_emails (email)
+  VALUES (NEW.email)
+  ON CONFLICT (email) DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
+
 SET default_tablespace = '';
 
 SET default_table_access_method = "heap";
@@ -94,6 +109,16 @@ CREATE TABLE IF NOT EXISTS "public"."pizzas" (
 ALTER TABLE "public"."pizzas" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."registered_emails" (
+    "email" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
+    CONSTRAINT "registered_emails_email_check" CHECK (("email" = "lower"("email")))
+);
+
+
+ALTER TABLE "public"."registered_emails" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."store_members" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "store_id" "uuid" NOT NULL,
@@ -101,29 +126,14 @@ CREATE TABLE IF NOT EXISTS "public"."store_members" (
     "role" "text" NOT NULL,
     "status" "text" DEFAULT 'invited'::"text" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()),
-    "email" "text",
+    "email" "text" NOT NULL,
+    CONSTRAINT "store_members_email_check" CHECK (("email" = "lower"("email"))),
     CONSTRAINT "store_members_role_check" CHECK (("role" = ANY (ARRAY['owner'::"text", 'chef'::"text"]))),
     CONSTRAINT "store_members_status_check" CHECK (("status" = ANY (ARRAY['invited'::"text", 'active'::"text"])))
 );
 
 
 ALTER TABLE "public"."store_members" OWNER TO "postgres";
-
-
-CREATE OR REPLACE VIEW "public"."store_members_with_email" AS
- SELECT "sm"."id",
-    "sm"."store_id",
-    "sm"."user_id",
-    "sm"."role",
-    "sm"."status",
-    "sm"."created_at",
-    "sm"."email",
-    COALESCE("sm"."email", ("au"."email")::"text") AS "user_email"
-   FROM ("public"."store_members" "sm"
-     LEFT JOIN "auth"."users" "au" ON (("au"."id" = "sm"."user_id")));
-
-
-ALTER TABLE "public"."store_members_with_email" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."stores" (
@@ -159,6 +169,11 @@ ALTER TABLE ONLY "public"."pizza_toppings"
 
 ALTER TABLE ONLY "public"."pizzas"
     ADD CONSTRAINT "pizzas_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."registered_emails"
+    ADD CONSTRAINT "registered_emails_pkey" PRIMARY KEY ("email");
 
 
 
@@ -416,6 +431,12 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 
 
 
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
+
+
+
 
 
 
@@ -443,15 +464,15 @@ GRANT ALL ON TABLE "public"."pizzas" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."registered_emails" TO "anon";
+GRANT ALL ON TABLE "public"."registered_emails" TO "authenticated";
+GRANT ALL ON TABLE "public"."registered_emails" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."store_members" TO "anon";
 GRANT ALL ON TABLE "public"."store_members" TO "authenticated";
 GRANT ALL ON TABLE "public"."store_members" TO "service_role";
-
-
-
-GRANT ALL ON TABLE "public"."store_members_with_email" TO "anon";
-GRANT ALL ON TABLE "public"."store_members_with_email" TO "authenticated";
-GRANT ALL ON TABLE "public"."store_members_with_email" TO "service_role";
 
 
 
