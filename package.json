@@ -9,6 +9,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
     "lint": "turbo run lint",
     "deploy": "vercel deploy",
     "export-schema": "npm run export-schema --workspace=@pizza-management/server"
