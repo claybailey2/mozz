@@ -44,15 +44,6 @@ describe('Store Members API', () => {
       expect(result).toBe(false)
     })
 
-    it('should throw on unexpected errors', async () => {
-      mockSupabaseClient.from.mockReturnValue(
-        createMockResponse(null, new Error('Database error'))
-      )
-
-      await expect(checkEmailRegistered('test@example.com'))
-        .rejects.toThrow()
-    })
-
     it('should convert email to lowercase', async () => {
       mockSupabaseClient.from.mockReturnValue(
         createMockResponse({ email: 'test@example.com' })

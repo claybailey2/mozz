@@ -4,7 +4,15 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "public/dist/**"]
+      "outputs": ["dist/**", "public/dist/**"]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": []
+    },
+    "test:coverage": {
+      "dependsOn": ["build"],
+      "outputs": []
     },
     "lint": {},
     "dev": {

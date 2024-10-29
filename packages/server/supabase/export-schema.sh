@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# A script to export the Supabase schema from the cloud database and save it to a file.
+
 # Set script to exit on error
 set -e
 

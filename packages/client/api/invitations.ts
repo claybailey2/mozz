@@ -28,7 +28,7 @@ const allowCors =
       "Access-Control-Allow-Origin",
       process.env.NODE_ENV === "production"
         ? "https://www.mozz.online"
-        : "http://localhost:5179"
+        : "http://localhost:5173"
     );
     res.setHeader(
       "Access-Control-Allow-Methods",

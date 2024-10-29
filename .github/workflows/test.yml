@@ -24,13 +24,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Setup Docker
-        uses: docker-practice/actions-setup-docker@v1
-
-      - name: Install Supabase CLI
-        run: |
-          curl -fsSL https://cli.supabase.com/install.sh | sh
-          supabase -v
+      # Docker is already available in GitHub Actions Ubuntu runners
+      # Just verify it's running
+      - name: Verify Docker
+        run: docker --version
 
       - name: Start Supabase
         run: |
@@ -38,14 +35,14 @@ jobs:
           sleep 10 # Give some time for services to be ready
 
       - name: Run Tests
-        run: npm run test
+        run: npm run test:coverage
         env:
           CI: true
 
       # Optional: Upload test results as artifacts
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v8
         with:
           name: test-results
           path: coverage/

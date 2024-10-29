@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "npx supabase start",
+    "dev": "npx supabase start",
     "export-schema": "chmod +x ./supabase/export-schema.sh && dotenv -e .env -- ./supabase/export-schema.sh",
     "reset-local": "npx supabase db reset"
   },
