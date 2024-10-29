@@ -1,5 +1,5 @@
 # 🍕 Mozz™️ – Pizza Management System
-[![Tests](https://github.com/claybailey2/mozz/actions/workflows/test.yml/badge.svg)](https://github.com/claybailey2/mozz/actions/workflows/test.yml)
+[![Tests](https://github.com/claybailey2/mozz/actions/workflows/test.yml/badge.svg)](https://github.com/claybailey2/mozz/actions/workflows/test.yml?branch=main)
 [![Deploy](https://vercel.com/button)](https://mozz-client-claybailey2s-projects.vercel.app)
 
 A modern web application for managing pizza stores, toppings, and chef collaborations. Built with React, TypeScript, and Supabase.
