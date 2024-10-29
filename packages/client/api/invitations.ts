@@ -2,12 +2,42 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
 
+// CORS configuration
+const allowCors = (fn: (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse>) => async (
+  req: VercelRequest,
+  res: VercelResponse
+) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' 
+    ? 'https://www.mozz.online'
+    : 'http://localhost:5173')
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET,OPTIONS,PATCH,DELETE,POST,PUT'
+  )
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  )
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
+  // Call the actual handler
+  return await fn(req, res)
+}
+
+console.log('Supabase URL:', process.env.SUPABASE_URL)
+console.log('Supabase Service Role Key:', process.env.SUPABASE_SERVICE_ROLE_KEY)
+
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-
-export default async function handler(
+async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
@@ -32,6 +62,7 @@ export default async function handler(
 
     // Check if user exists in auth.users
     const { data } = await supabase.auth.admin.listUsers();
+    console.log( data )
     const existingUser = data?.users.filter(user => user.email === email.toLowerCase()) || []
     const isExistingUser = existingUser.length > 0
 
@@ -62,9 +93,12 @@ export default async function handler(
 
     if (otpError) throw otpError
 
-    res.status(200).json({ success: true, isExistingUser })
+    return res.status(200).json({ success: true, isExistingUser })
   } catch (error) {
     console.error('Invitation error:', error)
-    res.status(500).json({ error: 'Failed to send invitation' })
+    return res.status(500).json({ error: 'Failed to send invitation' })
   }
 }
+
+// Export the handler wrapped with CORS
+export default allowCors(handler)

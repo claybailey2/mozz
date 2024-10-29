@@ -1,7 +1,11 @@
 import { supabase } from "../supabase"
 
-export async function inviteToStore(email: string, storeId: string, role: 'chef' | 'owner' = 'chef') {
-  const response = await fetch('/api/invitations', {
+const apiUrl = import.meta.env.DEV 
+  ? 'http://localhost:3000/api/invitations'
+  : '/api/invitations'
+  
+export async function inviteToStore(storeId: string, email: string, role: 'chef' | 'owner' = 'chef') {
+  const response = await fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

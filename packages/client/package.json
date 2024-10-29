@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:api": "vercel dev",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:api\"",
+    "dev:api": "vercel dev --yes",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -56,7 +55,6 @@
     "@vitejs/plugin-react-swc": "^3.3.2",
     "@vitest/coverage-v8": "^2.1.4",
     "autoprefixer": "^10.4.20",
-    "concurrently": "^9.0.1",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",

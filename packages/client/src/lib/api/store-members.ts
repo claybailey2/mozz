@@ -43,36 +43,6 @@ export interface InviteChefData {
   role: 'chef' | 'owner';
 }
 
-const apiUrl = import.meta.env.DEV 
-  ? 'http://localhost:3000/api/invitations'
-  : '/api/invitations'
-
-
-export async function inviteToStore(storeId: string, email: string, role: 'chef' | 'owner' = 'chef') {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Must be logged in to invite members')
-
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: email.toLowerCase(),
-      storeId,
-      inviterId: user.id,
-      role
-    })
-  })
-
-  if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.message || 'Failed to send invitation')
-  }
-
-  return response.json()
-}
-
 // Update the accept invitation logic to handle both new and existing users
 export async function acceptStoreInvitation({ 
   email, 
