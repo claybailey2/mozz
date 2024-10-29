@@ -6,7 +6,7 @@ export function useStoreDashboard(storeId: string) {
     queryKey: ['store-members', storeId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('store_members_with_email')
+        .from('store_members')
         .select('*')
         .eq('store_id', storeId)
         .order('role', { ascending: false }) // owners first
