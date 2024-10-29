@@ -1,5 +1,5 @@
 import { supabase } from '../supabase'
-import type { Database } from '@pizza-management/shared'
+import type { Database } from '@/lib/supabase'
 import { Topping } from './toppings'
 import { validateUniquePizza, validateUniquePizzaToppings } from './validators'
 

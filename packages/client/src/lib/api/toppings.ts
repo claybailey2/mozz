@@ -1,5 +1,5 @@
 import { supabase } from '../supabase'
-import type { Database } from '@pizza-management/shared'
+import type { Database } from '@/lib/supabase'
 import { validateUniqueTopping } from './validators'
 
 export type Topping = Database['public']['Tables']['toppings']['Row']

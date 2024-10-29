@@ -1,5 +1,5 @@
 import { supabase } from '../supabase'
-import type { Database } from '@pizza-management/shared'
+import type { Database } from '@/lib/supabase'
 
 type StoreMember = Database['public']['Tables']['store_members']['Row']
 
